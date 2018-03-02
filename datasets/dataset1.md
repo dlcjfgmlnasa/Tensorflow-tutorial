@@ -83,25 +83,25 @@ print(np.shape(test_y))     # 결과 : (30, )
 train_x.head(5)
 ```
 
-![붓꽃 그림](../image/iris_dataset1.png)
+![train_x 모양](../image/iris_dataset1.png)
 
 ```python
 train_y.head(5)
 ```
 
-![붓꽃 그림](../image/iris_dataset2.png)
+![train_y 모양](../image/iris_dataset2.png)
 
 ```python
 test_x.head(5)
 ```
 
-![붓꽃 그림](../image/iris_dataset3.png)
+![test_x 모양](../image/iris_dataset3.png)
 
 ```python
 test_y.head(5)
 ```
 
-![붓꽃 그림](../image/iris_dataset4.png)
+![test_y 모양](../image/iris_dataset4.png)
 
 ## Datasets API가 왜 좋은가요??
 
