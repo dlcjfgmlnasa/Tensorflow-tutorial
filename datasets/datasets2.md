@@ -4,15 +4,17 @@
 
 이제 **tf.data**의 특징에 대해 알아 보도록 하겠습니다.
 
-- **tf.data.Dataset**는 각 요소가 하나 이상의 **tf.Tensor**를 포함하는 요소들을 가지고 있습니다.
+- **tf.data.Dataset**는 각 요소가 하나 이상의 **tf.Tensor**를 포함하는 요소(elements)들을 가지고 있습니다.
 - **tf.data.Dataset**은 변환(transformation)을 실시 할 수 있고 변환(transformation)을 적용하면 변환된 **tf.data.Dataset**이 만들어 집니다.
 - **tf.data.Iterator**는 데이터 집합에서 element 들을 추출하는 방법들을 제공합니다. element들을 주출할때 **Iterator.get_next()**을 실행하면 이전에 실행되었던 element의 다음 element를 반환합니다. 그리고 input pipeline code와 model graph code 간에 interface역할을 합니다.
 
+---
+
 ## Basic mechanism
 
-이 섹션에서는 **tf.data** 가 어떤식으로 사용하면 되는지 살펴보도록 하겠습니다.
+이 섹션에서는 **tf.data** 가 어떤식으로 사용하면 되는지 살펴보도록 하겠습니다. 이번 단락을 잘 이해하면 전체적으로 어떤식으로 pipeline을 만들면 될 지 대략감이 잡히시리라 기대합니다.
 
-### Create tf.data.Datasets
+### 1. Create tf.data.Datasets
 
 먼저 **tf.data.Datasets**을 만드는 방법에 대해 알아 보도록 하겠습니다. 디스크에 저장되어 있는 데이터들을 **tf.data.Datasets** 객체로 만들어 주기 위해서는, `tf.data.Dataset.from_tensors()` 또는 `tf.data.Dataset.from_tensor_slice()` 를 이용하면 됩니다. 그리고 입력 데이터가 TFRecode 형태로 디스크에 저장되어 있으면 `tf.data.TFRecordDataset`를 사용하면 됩니다.
 
@@ -40,16 +42,15 @@ dataset = tf.data.Dataset.from_tensor_slices(
         'b': tf.random_uniform([4, 100], maxval=100, dtype=tf.int32)
     }
 )
-
 print(dataset.output_type)      # ==> {'a' : tf.float32, 'b' : tf.int32}
 print(dataset.output_shapes)    # ==> {'a' : () 'b' : (100, )}
 ```
 
-### Datasets transformation
+### 2. Datasets transformation
 
-**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. Dataset.map)` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. Dataset.batch)`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
+**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map)` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch)`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
 
-### Create an tf.data.Iterator
+### 3. Create an tf.data.Iterator
 
 Dataset에서 input date에 대해 표현을 하면, **Iterator**은 해 **Dataset** 세트의 요소에 엑세스하기 위해 작성하는 것입니다. **tf.data** API는 다음 반복자를 지원합니다.
 
@@ -58,7 +59,7 @@ Dataset에서 input date에 대해 표현을 하면, **Iterator**은 해 **Datas
 - reinitializable and
 - feedable
 
-**one-shot 반복자**는 명시적으로 초기화 할 필요없이, Dataset 통해 한 번 반복하는 지원 반복자의 간단한 형태이다. 원샷 반복자는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리하지만 매개 변수화를 지원하지 않습니다.
+**one-shot iterator**는 명시적으로 초기화 할 필요없이, Dataset 통해 한 번 반복하는 지원 반복자의 간단한 형태이다. 원샷 반복자는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리하지만 매개 변수화를 지원하지 않습니다.
 
 ```python
 dataset = tf.data.Dataset.range(100)
@@ -72,7 +73,7 @@ print(sess.run(next_element))   # ==> 2
 print(sess.run(next_element))   # ==> 3
 ```
 
-**initializable 반복자**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 `tf.placeholder` 할 수 있습니다. 예제를 보면 확실히 알 수 있다.
+**initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 `tf.placeholder` 할 수 있습니다. 예제를 보면 확실히 알 수 있다.
 
 ```python
 max_value = tf.placeholder(tf.int64, shape=[])
@@ -93,7 +94,7 @@ for _ in range(100):
     print(value)                # ==> 0, 1, 2, 3, 4, .... , 100 (0부터 100까지)
 ```
 
-**reinitializable 반복자**는 여러가지로 초기화를 할 수 있습니다. 예를 들어 일반화를 향상시키기 위해 입력 이미지의 랜덤으로 입력하는 train 위한 입력 파이프라인과 데이터가 얼마나 정확한지 확인하는 test를 위한 입력 파이프 라인은 Dataset의 구조를 동일한 하지만 서로 다른 객체를 사용해야 됩니다. 그때 필요한 것이 reinitializable 입니다.
+**reinitializable iterator**는 여러가지로 초기화를 할 수 있습니다. 예를 들어 일반화를 향상시키기 위해 입력 이미지의 랜덤으로 입력하는 train 위한 입력 파이프라인과 데이터가 얼마나 정확한지 확인하는 test를 위한 입력 파이프 라인은 Dataset의 구조를 동일한 하지만 서로 다른 객체를 사용해야 됩니다. 그때 필요한 것이 reinitializable 입니다.
 
 ```python
 # training과 validation datasets는 같은 구조를 가지고 있습니다
@@ -124,7 +125,7 @@ for _ in range(20):
         print(sess.run(next_element))
 ```
 
-**feedable 반복자**는 tf.placeholder것을 선택하기 위해
+**feedable iterator**는 tf.placeholder것을 선택하기 위해 **Iterator**각 호출에 사용하는 tf.Session.run을 통해 이터레이터를 전환할때 데이터세트의 사작부분에서 반복기를 초기화 할 필요가 없습니다.
 
 ```python
 training_dataset = tf.data.Dataset.range(100).map(

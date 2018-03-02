@@ -8,6 +8,8 @@
 - [Pandas 공식홈페이지](https://pandas.pydata.org/)
 - [Tenorflow 튜토리얼 페이지](https://www.tensorflow.org/get_started/)
 
+---
+
 ## 아이리스 데이터셋
 
 먼저 아이리스 데이터셋(iris dataset)받아오는 방법에 대해 설명하기에 앞서 아이리스 데이터셋에 대해 간략히 알아 보겠습니다.
