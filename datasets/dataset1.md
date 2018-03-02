@@ -12,10 +12,9 @@
 
 먼저 아이리스 데이터셋(iris dataset)받아오는 방법에 대해 설명하기에 앞서 아이리스 데이터셋에 대해 간략히 알아 보겠습니다.
 
+![붓꽃 그림](../image/붓꽃.png)
+
 아이리스 데이터셋은 붓꽃의 특징을 저장해 놓은 데이터셋들의 모음으로서. 붓꽃의 꽃잎의 각 부분의 너비와 길이등을 측정한 데이터셋 입니다. 총 150개의 레코드와 6개의 필드로 나타내어져 있습니다. 각 필드들의 정보는 아래의 표에 자세히 설명되어있습니다.
-
-그림1 (iris 그림)
-
 
 | 필드이름 | 필드정보 |
 |:-------:|:-------:|
@@ -80,13 +79,29 @@ print(np.shape(test_y))     # 결과 : (30, )
 
 아래의 그림은 `train_x, train_y, test_x, test_y` 의 데이터 어떻게 생겼는지를 표현하고 있습니다.
 
-그림2 (train_x에 대한 그림)
+```python
+train_x.head(5)
+```
 
-그림3 (train_y에 대한 그림)
+![붓꽃 그림](../image/iris_dataset1.png)
 
-그림4 (test_x에 대한 그림)
+```python
+train_y.head(5)
+```
 
-그림5 (test_y에 대한 그림)
+![붓꽃 그림](../image/iris_dataset2.png)
+
+```python
+test_x.head(5)
+```
+
+![붓꽃 그림](../image/iris_dataset3.png)
+
+```python
+test_y.head(5)
+```
+
+![붓꽃 그림](../image/iris_dataset4.png)
 
 ## Datasets API가 왜 좋은가요??
 
@@ -163,6 +178,8 @@ def get_shuffle_input_pipeline(train_file_path, epoch_size, batch_size):
 
 def train_fn(batch_set):
     """Model(DNN, CNN, RNN etc) Train"""
+
+    """ Model Graph section (모델 그래프 정의 구간)"""
     with tf.Session() as session:
         session.run(tf.global_variables_initializer())
         while True:
@@ -181,4 +198,4 @@ batch_set = get_shuffle_input_pipeline(train_file_path, epoch_size, batch_size)
 train_fn(batch_set)
 ```
 
-둘의 소스소드를 보면 Datasets API를 이용한 코드가 깔끔합니다. 또한 Dataset API를 사용한 코드 5번째 줄을 보시면  `dataset.shuffle(1000).repeat(epoch_size).batch(batch_size)` 데이터셋을 섞고 반복하고 배치시스템을 이용할것이라는 것을 직관적으로 알 수가 있습니다. Thread 관리 또한 내부적으로 자동으로 관리해 주기 때문에 편리합니다. 다음 포스팅에서는 본격적으로 Datasets API를 사용하는 방법에 대해 설명드리도록 하겠습니다.
+둘의 소스소드를 보면 Datasets API를 이용한 코드가 깔끔합니다. 또한 Dataset API를 사용한 코드 5번째 줄을 보시면  `dataset.shuffle(1000).repeat(epoch_size).batch(batch_size) : 데이터셋을 섞고 반복하고 배치시스템을 이용` 할것이라는 것을 직관적으로 알 수가 있습니다. Thread 관리 또한 내부적으로 자동으로 관리해 주기 때문에 편리합니다. 다음 포스팅에서는 본격적으로 Datasets API를 사용하는 방법에 대해 설명드리도록 하겠습니다.
