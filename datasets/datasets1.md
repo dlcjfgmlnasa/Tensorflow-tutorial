@@ -1,6 +1,6 @@
 # Tensorflow tf.Data API start (1)
 
-오늘부터 설명할 튜토리얼은 최근 많이 사용되고 있는 **tf.data API**에 대해 설명해보려고 합니다. 딥러닝 개발을 하다가보면 데이터를 전처리하고 데이터를 파이프 라인을 구성하는데 많은 시간이 걸리는 것을 알 수가 있는데요. 텐서플로우에서는 많은 데이터 전처리 및 데이터 파이프라인 모듈들이 있지만 최근 많이 사용되고 있는 **tf.data API**를 사용하면 굉장히 쉽고 빠르게 데이터를 처리할수 있어서 모델개발에 집중할 수 있도록 해줍니다.
+최근 많이 사용되고 있는 **tf.data API**에 대해 설명해보려고 합니다. 딥러닝 개발을 하다가보면 데이터를 전처리하고 데이터를 파이프 라인을 구성하는데 많은 시간이 걸리는 것을 알 수가 있는데요. 텐서플로우에서는 많은 데이터 전처리 및 데이터 파이프라인 모듈들이 있지만 최근 많이 사용되고 있는 **tf.data API**를 사용하면 굉장히 쉽고 빠르게 데이터를 처리할수 있어서 모델개발에 집중할 수 있도록 해줍니다.
 
 이 문서는 텐서플로우 공식홈페이지 바탕으로 작성하였고, pandas, numpy에 대한 설명은 따로 드리지는 않을것이며 텐서플로우를 조금은 사용하신분들이라면 쉽게 이해 하실수 있게 작성하였습니다. pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내용을 참조하세요
 
@@ -12,7 +12,7 @@
 
 먼저 아이리스 데이터셋(iris dataset)받아오는 방법에 대해 설명하기에 앞서 아이리스 데이터셋에 대해 간략히 알아 보겠습니다.
 
-![붓꽃 그림](../image/붓꽃.png)
+![붓꽃 그림](./image/붓꽃.png)
 
 아이리스 데이터셋은 붓꽃의 특징을 저장해 놓은 데이터셋들의 모음으로서. 붓꽃의 꽃잎의 각 부분의 너비와 길이등을 측정한 데이터셋 입니다. 총 150개의 레코드와 6개의 필드로 나타내어져 있습니다. 각 필드들의 정보는 아래의 표에 자세히 설명되어있습니다.
 
@@ -83,25 +83,25 @@ print(np.shape(test_y))     # 결과 : (30, )
 train_x.head(5)
 ```
 
-![train_x 모양](../image/iris_dataset1.PNG)
+![train_x 모양](./image/iris_dataset1.PNG)
 
 ```python
 train_y.head(5)
 ```
 
-![train_y 모양](../image/iris_dataset2.PNG)
+![train_y 모양](./image/iris_dataset2.PNG)
 
 ```python
 test_x.head(5)
 ```
 
-![test_x 모양](../image/iris_dataset3.PNG)
+![test_x 모양](./image/iris_dataset3.PNG)
 
 ```python
 test_y.head(5)
 ```
 
-![test_y 모양](../image/iris_dataset4.PNG)
+![test_y 모양](./image/iris_dataset4.PNG)
 
 ## Datasets API가 왜 좋은가요??
 
