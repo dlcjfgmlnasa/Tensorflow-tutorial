@@ -1,10 +1,9 @@
 # Tensorflow tf.Data API start (1)
 
-최근 많이 사용되고 있는 **tf.data API**에 대해 설명해보려고 합니다. 딥러닝으로 개발을 하면 데이터를 전처리하고 데이터 파이프라인을 구성하는데 더 많은 시간이 걸리는 것을 알 수 있습니다. 텐서플로우에는 다양한 데이터 전처리 및 데이터 파이프라인 모듈들이 있지만 최근 들어 많이 사용되고 있는 **tf.data API**를 사용하면 보다 쉽고 빠르게 데이터를 처리할 수 있으므로 모델 개발에 더 집중할 수 있습니다.
+최근 많이 사용되고 있는 **tf.data API**에 대해 설명해보려고 합니다. 딥러닝 개발을 하다가보면 데이터를 전처리하고 데이터를 파이프 라인을 구성하는데 많은 시간이 걸리는 것을 알 수가 있는데요. 텐서플로우에서는 많은 데이터 전처리 및 데이터 파이프라인 모듈들이 있지만 최근 많이 사용되고 있는 **tf.data API**를 사용하면 굉장히 쉽고 빠르게 데이터를 처리할수 있어서 모델개발에 집중할 수 있도록 해줍니다.
 
-이 문서는 텐서플로우 공식홈페이지를 바탕으로 작성되었습니다.  
-pandas, numpy에 대한 설명은 따로 드리지는 않을것이며 텐서플로우를 사용해보신 분들 이라면 쉽게 이해 하실수 있게 작성하였습니다.
-pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내용을 참조하세요
+이 문서는 텐서플로우 공식홈페이지 바탕으로 작성하였고, pandas, numpy에 대한 설명은 따로 드리지는 않을것이며 텐서플로우를 조금은 사용하신분들이라면 쉽게 이해 하실수 있게 작성하였습니다. pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내용을 참조하세요
+
 - [Numpy 공식홈페이지](http://www.numpy.org/)
 - [Pandas 공식홈페이지](https://pandas.pydata.org/)
 - [Tenorflow 튜토리얼 페이지](https://www.tensorflow.org/get_started/)
@@ -13,12 +12,12 @@ pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내
 
 ## 아이리스 데이터셋
 
-먼저 아이리스 데이터셋(iris dataset)을 가져오는 방법에 관해 설명하기에 앞서 아이리스 데이터셋에 대해 간략히 알아보겠습니다.
+먼저 아이리스 데이터셋(iris dataset)받아오는 방법에 대해 설명하기에 앞서 아이리스 데이터셋에 대해 간략히 알아 보겠습니다.
 
 ![붓꽃 그림](./image/붓꽃.png)
 > 아이리스는 붓꽃을 의미합니다.
 
-아이리스 데이터셋은 붓꽃의 특징을 저장해 놓은 데이터셋들의 모음으로서. 붓꽃의 꽃잎의 각 부분의 너비와 길이 등을 측정한 데이터셋 입니다. 총 150개의 레코드와 6개의 필드로 나타내어져 있습니다. 각 필드의 정보는 아래의 표에 자세히 설명되어있습니다.
+아이리스 데이터셋은 붓꽃의 특징을 저장해 놓은 데이터셋들의 모음으로서. 붓꽃의 꽃잎의 각 부분의 너비와 길이등을 측정한 데이터셋 입니다. 총 150개의 레코드와 6개의 필드로 나타내어져 있습니다. 각 필드들의 정보는 아래의 표에 자세히 설명되어있습니다.
 
 | 필드이름 | 필드정보 |
 |:-------:|:-------:|
@@ -29,9 +28,9 @@ pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내
 |Sepal Width| 꽃잎의 너비 정보 |
 |Species|꽃의 종류(setosa/versicolor/viginica)|
 
-아이리스 데이터셋을 이용하면 꽃받침의 길이, 꽃받침의 너비, 꽃잎의 길이, 꽃잎의 너비 정보를 이용하여 꽃의 종류(setosa/versicolor/viginica)를 알아맞히는 모델을 만들 수가 있을 것입니다.
+아이리스 데이터셋을 이용하면 꽃받침의 길이, 꽃받침의 너비, 꽃잎의 길이, 꽃잎의 너비 정보를 이용하여 꽃의 종류(setosa/versicolor/viginica)를 알아맞추는 모델을 만들 수가 있을 것입니다.
 
-이제 아이리스 데이터셋을 가져와 봅시다.
+이제 아이리스 데이터셋을 받아와 보겠습니다.
 
 ```python
 import numpy as np
@@ -70,7 +69,7 @@ print(np.shape(test_x))     # 결과 : (30, 4)
 print(np.shape(test_y))     # 결과 : (30, )
 ```
 
-위의 코드에 대해 간략히 설명해보겠습니다.
+위의 코드에 대해 간략히 설명하면
 
 - maybe_download() func
   - [http://download.tensorflow.org/data/](http://download.tensorflow.org/data/)로 부터 아이리스 데이터셋을 다운받습니다.
@@ -79,9 +78,9 @@ print(np.shape(test_y))     # 결과 : (30, )
   - pd.read_csv() method를 이용해 아이리스 데이터셋을 로드합니다.
   - pop method를 이용하여 feature와 label로 구분 합니다.
 
-위 코드를 실행하면 `train을 위한 feature dataset(train_x), label(train_y) dataset / test를 위한 feature(test_x) dataset, label(test_y) dataset` 가 만들어집니다.
+위 코드를 실행하면 `train을 위한 feature dataset(train_x), label(train_y) dataset / test를 위한 feature(test_x) dataset, label(test_y) dataset` 가 만들어 집니다.
 
-아래의 그림은 `train_x, train_y, test_x, test_y` 의 데이터 어떻게 생겼는지 표현하고 있습니다.
+아래의 그림은 `train_x, train_y, test_x, test_y` 의 데이터 어떻게 생겼는지를 표현하고 있습니다.
 
 ```python
 train_x.head(5)
@@ -107,11 +106,9 @@ test_y.head(5)
 
 ![test_y 모양](./image/iris_dataset4.PNG)
 
----
-
 ## Datasets API가 왜 좋은가요??
 
-본격적으로 tf.data API를 보기에 앞서 이전에 텐서플로우에서 데이터 파이트라인을 구성하는 방법과 tf.data API를 이용해 데이터 파이프라인을 구성하는 방법의 차이를 알아봅시다. 아래의 코드들은 iris dataset을 이용해 데이터 파이프라인을 구성합니다. 아직 텐서플로우에 익숙하지 않은 독자들은 아래의 코드를 이해하기 힘들겠지만 한줄씩 이해하기 보다는 전체적으로 두 코드의 차이를 알아보고 왜 tf.data API가 더 편한지를 느껴보는 것이 어떨까 싶습니다. (다음번에 소스코드에 대해 자세히 설명하는 시간을 가져 보겠습니다.)
+본격적으로 tf.data API를 설명하기에 앞서 이전에 텐서플로우에서 데이터 파이트라인을 구성하는 방법과 tf.data API를 이용해 데이터 파이프라인을 구성하는 방법의 차이를 설명하곘습니다. 아래의 코드들은 iris dataset을 이용해 파이프라인을 구성하고 있습니다. 텐서플로우에 익숙하지 않은 독자들은 아래의 코드를 이해하기 힘드시겠지만 한줄한줄 이해하시기 보다는 전체적으로 두 코드의 차이를 보고 왜 tf.data API가 편한지를 느끼시면 될듯합니다. (다음 기회에 소스코드에 대해 자세히 설명하는 시간을 가져 보도록 하겠습니다.)
 
 ### 1. Datasets API를 사용하지 않은 코드
 
@@ -204,4 +201,4 @@ batch_set = get_shuffle_input_pipeline(train_file_path, epoch_size, batch_size)
 train_fn(batch_set)
 ```
 
-두 개의 소스코드를 비교해 보면, tf.data API를 이용한 코드가 깔끔하다는 것을 알 수 있습니다. 또한 tf.data API를 사용한 코드의 5번째 줄에서  `dataset.shuffle(1000).repeat(epoch_size).batch(batch_size)` 데이터셋을 섞고 반복하고 배치시스템을 이용 할 것이라는 것을 직관적으로 알 수가 있습니다. Thread 관리 또한 내부적으로 자동으로 관리해 주기 때문에 편리합니다. 다음 포스팅에서는 본격적으로 tf.data API를 사용하는 방법에 대해 알아보겠습니다.
+둘의 소스코드를 보면 tf.data API를 이용한 코드가 깔끔합니다. 또한 tf.data API를 사용한 코드 5번째 줄을 보시면  `dataset.shuffle(1000).repeat(epoch_size).batch(batch_size) : 데이터셋을 섞고 반복하고 배치시스템을 이용` 할것이라는 것을 직관적으로 알 수가 있습니다. Thread 관리 또한 내부적으로 자동으로 관리해 주기 때문에 편리합니다. 다음 포스팅에서는 본격적으로 tf.data API를 사용하는 방법에 대해 설명드리도록 하겠습니다.
