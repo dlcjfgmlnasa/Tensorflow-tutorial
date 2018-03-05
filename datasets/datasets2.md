@@ -16,7 +16,7 @@
 
 ### 1. Create tf.data.Datasets
 
-먼저 **tf.data.Datasets**을 만드는 방법에 대해 알아 보도록 하겠습니다. 디스크에 저장되어 있는 데이터들을 **tf.data.Datasets** 객체로 만들어 주기 위해서는, `tf.data.Dataset.from_tensors()` 또는 `tf.data.Dataset.from_tensor_slice()` 를 이용하면 됩니다. 그리고 입력 데이터가 TFRecode 형태로 디스크에 저장되어 있으면 `tf.data.TFRecordDataset`를 사용하면 됩니다.
+먼저 **tf.data.Datasets**을 만드는 방법에 대해 알아 보도록 하겠습니다. 디스크에 저장되어 있는 데이터들을 **tf.data.Datasets** 객체로 만들어 주기 위해서는, `tf.data.Dataset.from_tensors()` 또는 `tf.data.Dataset.from_tensor_slice()` 를 이용하면 됩니다. 그리고 입력 데이터가 TFRecode 형태로 디스크에 저장되어 있으면 `tf.data.TFRecordDataset()`를 사용하면 됩니다.
 
 ```python
 dataset1 = tf.data.Dataset.from_tensor_slices(tf.random_uniform([4, 10]))
@@ -48,7 +48,7 @@ print(dataset.output_shapes)    # ==> {'a' : () 'b' : (100, )}
 
 ### 2. Datasets transformation
 
-**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map)` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch)`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
+**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map())` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch())`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
 
 ### 3. Create an tf.data.Iterator
 
@@ -73,7 +73,7 @@ print(sess.run(next_element))   # ==> 2
 print(sess.run(next_element))   # ==> 3
 ```
 
-**initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 `tf.placeholder` 할 수 있습니다. 예제를 보면 확실히 알 수 있다.
+**initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 `tf.placeholder()` 할 수 있습니다. 예제를 보면 확실히 알 수 있다.
 
 ```python
 max_value = tf.placeholder(tf.int64, shape=[])
