@@ -98,8 +98,8 @@ dataset = tf.data.Dataset.from_tensor_slices(
         'b': tf.random_uniform([4, 100], maxval=100, dtype=tf.int32)
     }
 )
-print(dataset.output_types)     # ==> {'a' : tf.float32, 'b' : tf.int32}
-print(dataset.output_shapes)    # ==> {'a': TensorShape([]), 'b': TensorShape([Dimension(100)])}
+print(dataset.output_types)         # ==> {'a' : tf.float32, 'b' : tf.int32}
+print(dataset.output_shapes)        # ==> {'a': TensorShape([]), 'b': TensorShape([Dimension(100)])}
 print(dataset.output_types['a'])    # ==> <dtype: 'float32'>
 print(dataset.output_types['b'])    # ==> <dtype: 'int32'>
 print(dataset.output_shapes['a'])   # ==> ()
@@ -108,11 +108,11 @@ print(dataset.output_shapes['b'])   # ==> (100, )
 
 ### 2. Datasets transformation
 
-**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map())` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch())`. **tf.data.Datasets** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
+**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map())` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch())`. **tf.data.Datasets** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Datasets](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
 
 ### 3. Create an tf.data.Iterator
 
-이전 장에서 **tf.data.Datasets** 을 어떻게 생성하고 다루는지에 대해 알아 보았습니다. 이번 장에서는 **tf.data.Datasets** 의 element에 엑세스하기위한 **tf.data.Iterator**에 대해 알아 보도록 하겠습니다. 각 element에 대해 엑세스를 하여 실제 값을 받아 올 수 있어야 model에 넣어 학습이 가능 할 것입니다. **tf.data** 에서는 총 4가지 형태의 iterator를 제공합니다.
+지금까지 **tf.data.Datasets** 을 어떻게 생성하고 다루는지에 대해 알아 보았습니다. 이번 장에서는 **tf.data.Datasets** 의 element에 엑세스 하기위한 **tf.data.Iterator**에 대해 알아 보도록 하겠습니다. **tf.data** 에서는 총 4가지 형태의 iterator를 제공합니다.
 
 - one-shot
 - initializable
@@ -123,7 +123,7 @@ print(dataset.output_shapes['b'])   # ==> (100, )
 
 **one-shot iterator**는 명시적으로 초기화 할 필요없이 한 번만 반복 할 수 있는 가장 간단한 iterator의 형태입니다. **one-shot iterator** 는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리합니다.
 
-아래 예제를 보시면 `tf.data.Dataset.range(100)` 를 이용해 0~100까지 데이터를 가지는 **tf.data.Dataset**을 생성하고 `make_one_shot_iterator()`를 이용하여 iterator를 생성해주고 iterator로 부터 생성된 `get_next()` graph(next_elements) 를 실행하여 다음 element에 엑세스해 결과값을 출력합니다.
+아래 예제를 보시면 `tf.data.Dataset.range(100)` 를 이용해 0~100까지 데이터를 가지는 **tf.data.Dataset**을 생성하고 `make_one_shot_iterator()`를 이용하여 iterator를 생성합니다. iterator로 부터 생성된 `get_next()` graph(next_elements) 를 실행하여 다음 element에 엑세스해 결과값을 출력합니다.
 
 ```python
 dataset = tf.data.Dataset.range(100)
@@ -182,7 +182,7 @@ while True:
 
 #### 2. initializable iterator
 
-**initializable iterator**는 **one-shot iterator** 와 달리 작업을 시작하기 전에 명시적으로 `iterator.initializer`를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 `tf.data.Dataset'의 정의를 매개변수화 할 수 있습니다. 아래 예제를 보시겠습니다.
+**initializable iterator**는 **one-shot iterator** 와 달리 작업을 시작하기 전에 명시적으로 `iterator.initializer`를 실행하여야 됩니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 `tf.data.Dataset'의 정의를 매개변수화 할 수 있습니다. 
 
 ```python
 max_value = tf.placeholder(tf.int64, shape=[])
@@ -203,10 +203,13 @@ for _ in range(100):
     print(value)                # ==> 0, 1, 2, 3, 4, .... , 100 (0부터 100까지)
 ```
 
+예제를 보시면 **tf.data.Datasets** 을 만들어 줄 때 max_value가 지정해 주어야 됩니다. 지정해 주기 위해서 `iterator.initializer`를 실행할때 feed_dict 옵션으로 max_value를 초기화해주면 되는것을 보실수가 있습니다.
+
 #### 3. reinitializable iterator
 
-**reinitializable iterator**는 여러가지를 초기화 할 수 있습니다. 예를 들어 일반화를 향상시키기 위해 입력 이미지의 랜덤으로 입력하는 train 을 위한 pipeline 과 데이터가 얼마나 정확한지 확인하는 test 를 위한 pipline은 **tf.data.Dataset** 의 구조가 동일하지만 서로 다른 객체를 사용해야 됩니다. 이때 필요한 것이 `reinitializable` 쉽게 처리할 수 있습니다.
-
+**reinitializable iterator**는 여러가지를 초기화 할 수 있습니다. 예를 들어 입력 이미지의 랜덤으로 섞여있는 train pipeline 과 얼마나 정확한지 확인하는 test pipline은 **tf.data.Dataset** 의 구조는 동일하지만 서로 다른 객체를 사용합니다.
+ `reinitializable` 구조가 동일한 복수개의 **tf.data.Datasets**를 초기화 할 떄 유용하게 사용될 수 있습니다.
+ 
 ```python
 # training과 validation datasets는 같은 구조를 가진다.
 training_dataset = tf.data.Dataset.range(100).map(
