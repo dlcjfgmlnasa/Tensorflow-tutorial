@@ -52,9 +52,9 @@ print(dataset2)                 # ==> <TensorSliceDataset shapes: (10,), types: 
 
 결과 값을 확인해 보면 `tf.data.Dataset.from_tensor()`은 데이터의 전체를 저장하는것을 보실수가 있고  `tf.data.Dataset.from_tensor_slices()`은 전체데이터를 slice해서 저장하는것을 보실 수가 있습니다.
 
-`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 **tf.data.Dataset**객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
+`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 **tf.data.Datasets**객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
 
-`Dataset.output_types` 과 `Dataset.output_shape` 속성을 사용하면 **tf.data.Datset** 의 각 element들의 type과 shape를 확인 할 수 있습니다.
+`Dataset.output_types` 과 `Dataset.output_shape` 속성을 사용하면 **tf.data.Datsets** 의 각 element들의 type과 shape를 확인 할 수 있습니다.
 
 ```python
 dataset1 = tf.data.Dataset.from_tensor_slices(tf.random_uniform([4, 10]))
@@ -74,7 +74,7 @@ print(dataset3.output_shapes)   # ==> (TensorShape([Dimension(10)]), (TensorShap
 
 ```
 
-**tf.data.Dataset** 의 단일 요소에 collection.namedtuple 또는 dict를 이용하여 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시면 이해하시기 편하실
+**tf.data.Datasets** 의 단일 요소에 collection.namedtuple 또는 dict를 이용하여 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시면 이해하시기 편하실
 
 ```python
 # nametuples 를 이용한 구성요소 이름 지정
@@ -108,7 +108,7 @@ print(dataset.output_shapes['b'])   # ==> (100, )
 
 ### 2. Datasets transformation
 
-**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map())` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch())`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
+**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map())` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch())`. **tf.data.Datasets** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
 
 ### 3. Create an tf.data.Iterator
 
@@ -121,9 +121,7 @@ print(dataset.output_shapes['b'])   # ==> (100, )
 
 #### 1. one-shot Iterator
 
-**one-shot iterator**는 명시적으로 초기화 할 필요없이 한 번만 반복 할 수 있는 가장 간단한 iterator의 형태입니다. **one-shot iterator** 는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리하지만 매개 변수화를 지원하지 않습니다.
-
-> ※ 매개 변수화를 지원하지 않는다는 말은 다른 형태의 iterator를 설명을 보시면 이해가 빠르시리라 생각됩니다.
+**one-shot iterator**는 명시적으로 초기화 할 필요없이 한 번만 반복 할 수 있는 가장 간단한 iterator의 형태입니다. **one-shot iterator** 는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리합니다.
 
 아래 예제를 보시면 `tf.data.Dataset.range(100)` 를 이용해 0~100까지 데이터를 가지는 **tf.data.Dataset**을 생성하고 `make_one_shot_iterator()`를 이용하여 iterator를 생성해주고 iterator로 부터 생성된 `get_next()` graph(next_elements) 를 실행하여 다음 element에 엑세스해 결과값을 출력합니다.
 
@@ -184,7 +182,7 @@ while True:
 
 #### 2. initializable iterator
 
-**initializable iterator**는 **one-shot iterator** 와 달리 작업을 시작하기 전에 명시적으로 `iterator.initializer`를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 할 수 있습니다 (제가 봐도 말이 어려운 거 같습니다. 아래 예제를 보시면 쉽게 이해 될꺼라 생각합니다.)
+**initializable iterator**는 **one-shot iterator** 와 달리 작업을 시작하기 전에 명시적으로 `iterator.initializer`를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 `tf.data.Dataset'의 정의를 매개변수화 할 수 있습니다. 아래 예제를 보시겠습니다.
 
 ```python
 max_value = tf.placeholder(tf.int64, shape=[])
