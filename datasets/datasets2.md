@@ -53,11 +53,11 @@ print(dataset1)                 # ==> <TensorDataset shapes: (4, 10), types: tf.
 print(dataset2)                 # ==> <TensorSliceDataset shapes: (10,), types: tf.float32>
 ```
 
-결과 값을 확인해 보면 `tf.data.Dataset.from_tensor(sample)`은 데이터의 전체를 저장하는것을 보실수가 있고 `tf.data.Dataset.from_tensor_slices(sample)`은 전체데이터를 slice해서 저장하는것을 보실 수가 있습니다.
+결과 값을 확인해 보면 `tf.data.Dataset.from_tensor()`은 데이터의 전체를 저장하는것을 보실수가 있고  `tf.data.Dataset.from_tensor_slices()`은 전체데이터를 slice해서 저장하는것을 보실 수가 있습니다.
 
-`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 `tf.data.Dataset`객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 Tensor의 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
+`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 `tf.data.Dataset`객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
 
-`Dataset.output_types`과 `Dataset.output_shape`속성을 사용하면 `tf.data.Datset`의 각 element들의 type과 shape를 확인 할 수 있습니다.
+`Dataset.output_types` 과 `Dataset.output_shape` 속성을 사용하면 `tf.data.Datset`의 각 element들의 type과 shape를 확인 할 수 있습니다.
 
 ```python
 dataset1 = tf.data.Dataset.from_tensor_slices(tf.random_uniform([4, 10]))
@@ -77,7 +77,7 @@ print(dataset3.output_shapes)   # ==> (TensorShape([Dimension(10)]), (TensorShap
 
 ```
 
-`tf.data.Dataset`의 단일 요소에 collection.namedtuple 또는 dict를 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시겠습니다.
+`tf.data.Dataset`의 단일 요소에 collection.namedtuple 또는 dict를 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시면 이해하시기 편하실
 
 ```python
 # nametuples 를 이용한 구성요소 이름 지정
