@@ -55,9 +55,9 @@ print(dataset2)                 # ==> <TensorSliceDataset shapes: (10,), types: 
 
 결과 값을 확인해 보면 `tf.data.Dataset.from_tensor()`은 데이터의 전체를 저장하는것을 보실수가 있고  `tf.data.Dataset.from_tensor_slices()`은 전체데이터를 slice해서 저장하는것을 보실 수가 있습니다.
 
-`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 `tf.data.Dataset`객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
+`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 **tf.data.Dataset**객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
 
-`Dataset.output_types` 과 `Dataset.output_shape` 속성을 사용하면 `tf.data.Datset`의 각 element들의 type과 shape를 확인 할 수 있습니다.
+`Dataset.output_types` 과 `Dataset.output_shape` 속성을 사용하면 **tf.data.Datset** 의 각 element들의 type과 shape를 확인 할 수 있습니다.
 
 ```python
 dataset1 = tf.data.Dataset.from_tensor_slices(tf.random_uniform([4, 10]))
@@ -77,7 +77,7 @@ print(dataset3.output_shapes)   # ==> (TensorShape([Dimension(10)]), (TensorShap
 
 ```
 
-`tf.data.Dataset`의 단일 요소에 collection.namedtuple 또는 dict를 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시면 이해하시기 편하실
+**tf.data.Dataset** 의 단일 요소에 collection.namedtuple 또는 dict를 이용하여 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시면 이해하시기 편하실
 
 ```python
 # nametuples 를 이용한 구성요소 이름 지정
@@ -115,14 +115,20 @@ print(dataset.output_shapes['b'])   # ==> (100, )
 
 ### 3. Create an tf.data.Iterator
 
-Dataset 에서 input date에 대해 표현을 하면, **Iterator** 은 해 **tf.data.Dataset** element에 엑세스하기 위해 사용됩니다. **tf.data** API는 다음 iterator를 지원합니다.
+이전 장에서 **tf.data.Datasets** 을 어떻게 생성하고 다루는지에 대해 알아 보았습니다. 이번 장에서는 **tf.data.Datasets** 의 element에 엑세스하기위한 **tf.data.Iterator**에 대해 알아 보도록 하겠습니다. 각 element에 대해 엑세스를 하여 실제 값을 받아 올 수 있어야 model에 넣어 학습이 가능 할 것입니다. **tf.data** 에서는 총 4가지 형태의 iterator를 제공합니다.
 
 - one-shot
 - initializable
 - reinitializable and
 - feedable
 
-**one-shot iterator**는 명시적으로 초기화 할 필요없이, Dataset 통해 한 번 반복하는 지원 반복자의 간단한 형태입니다. `원샷 반복자`는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리하지만 매개 변수화를 지원하지 않습니다.
+#### 1. one-shot Iterator
+
+**one-shot iterator**는 명시적으로 초기화 할 필요없이 한 번만 반복 할 수 있는 가장 간단한 iterator의 형태입니다. **one-shot iterator** 는 기존 큐 기반 입력 파이프 라인이 지원하는 거의 모든 경우를 처리하지만 매개 변수화를 지원하지 않습니다.
+
+> ※ 매개 변수화를 지원하지 않는다는 말은 다른 형태의 iterator를 설명을 보시면 이해가 빠르시리라 생각됩니다.
+
+아래 예제를 보시면 `tf.data.Dataset.range(100)` 를 이용해 0~100까지 데이터를 가지는 **tf.data.Dataset**을 생성하고 `make_one_shot_iterator()`를 이용하여 iterator를 생성해주고 iterator로 부터 생성된 `get_next()` graph(next_elements) 를 실행하여 다음 element에 엑세스해 결과값을 출력합니다.
 
 ```python
 dataset = tf.data.Dataset.range(100)
@@ -136,8 +142,52 @@ print(sess.run(next_element))   # ==> 2
 print(sess.run(next_element))   # ==> 3
 ```
 
-**initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 `tf.placeholder()` 할 수 있습니다. 예제를 보면 확실히 알 수 있다.
-**initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화(`tf.placeholder`) 할 수 있습니다. 아래 예제에서 차이점을 확인합니다.
+`sess.run`를 할때마다 순차적으로 element들이 출력되는 것을 보실 수가 있습니다.
+
+**one-shot iterator**는 한 번만 반복 할 수 있는 iterator라고 말씀드렸습니다. 아래 예제를 while문을 이용하여 두번 반복을 하였지만 실제로는 한번만 실행되는 것을 보실 수 있습니다.
+
+```python
+dataset = tf.data.Dataset.range(100)
+iterator = dataset.make_one_shot_iterator()
+next_element = iterator.get_next()
+
+while True:
+    try:
+        print(sess.run(next_element), end=' ')  # ==> 0, 1, 2, 3, ..., 99
+    except tf.errors.OutOfRangeError:   # 범위가 벗어나면 end를 출력하고 break
+        print('end\n')
+        break
+
+while True:
+    try:
+        print(sess.run(next_element), end=' ') # 실행 안됨!!
+    except tf.errors.OutOfRangeError:
+        print('end\n')    # end 출력
+        break
+"""
+결과 :
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 end
+
+end
+"""
+```
+
+만약 한번 더 반복시키고 싶으시다면 아래의 예제같이 iterator를 다시 만들어 주시면 됩니다.
+
+```python
+iterator2 = dataset.make_one_shot_iterator()
+next_element2 = iterator2.get_next()
+while True:
+    try:
+        print(sess.run(next_element2), end=' ')
+    except tf.errors.OutOfRangeError:
+        print('end')
+        break
+```
+
+#### 2. initializable iterator
+
+**initializable iterator**는 **one-shot iterator** 와 달리 작업을 시작하기 전에 명시적으로 `iterator.initializer`를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 할 수 있습니다 (제가 봐도 말이 어려운 거 같습니다. 아래 예제를 보시면 쉽게 이해 될꺼라 생각합니다.)
 
 ```python
 max_value = tf.placeholder(tf.int64, shape=[])
@@ -158,7 +208,9 @@ for _ in range(100):
     print(value)                # ==> 0, 1, 2, 3, 4, .... , 100 (0부터 100까지)
 ```
 
-**reinitializable iterator**는 여러가지를 초기화 할 수 있습니다. 예를 들어 일반화를 향상시키기 위해 입력 이미지의 랜덤으로 입력하는 train 을 위한 입력 파이프라인과 데이터가 얼마나 정확한지 확인하는 test 를 위한 입력 파이프 라인은 Dataset의 동일한 구조이지만 서로 다른 객체를 사용해야 됩니다. 이때 필요한 것이 `reinitializable` 입니다.
+#### 3. reinitializable iterator
+
+**reinitializable iterator**는 여러가지를 초기화 할 수 있습니다. 예를 들어 일반화를 향상시키기 위해 입력 이미지의 랜덤으로 입력하는 train 을 위한 pipeline 과 데이터가 얼마나 정확한지 확인하는 test 를 위한 pipline은 **tf.data.Dataset** 의 구조가 동일하지만 서로 다른 객체를 사용해야 됩니다. 이때 필요한 것이 `reinitializable` 쉽게 처리할 수 있습니다.
 
 ```python
 # training과 validation datasets는 같은 구조를 가진다.
