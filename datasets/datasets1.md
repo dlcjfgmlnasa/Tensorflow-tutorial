@@ -4,7 +4,7 @@
 
 이 문서는 텐서플로우 공식홈페이지를 바탕으로 작성되었습니다.  
 pandas, numpy에 대한 설명은 따로 드리지는 않을것이며 텐서플로우를 사용해보신 분들 이라면 쉽게 이해 하실수 있게 작성하였습니다.
-pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내용을 참조하세요\
+pandas, numpy, tensorflow 에 대해 자세히 알고 싶으시면 아래의 내용을 참조하세요
 
 - [Numpy 공식홈페이지](http://www.numpy.org/)
 - [Pandas 공식홈페이지](https://pandas.pydata.org/)

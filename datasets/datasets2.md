@@ -6,9 +6,9 @@
 
 **tf.data**의 특징은 다음과 같습니다.
 
-- **tf.data.Dataset**는 각 요소가 하나 이상의 **tf.Tensor**를 포함하는 요소(elements)들을 가진다.
-- **tf.data.Dataset**은 변환(transformation)을 실시 할 수 있고 변환(transformation)을 적용하면 변환된 **tf.data.Dataset**이 만들어진다.
-- **tf.data.Iterator**는 데이터 집합에서 element 들을 추출하는 방법들을 제공합니다. element들을 주출할때 **Iterator.get_next()**을 실행하면 이전에 실행되었던 element의 다음 element를 반환한다. 그리고 input pipeline code와 model graph code 간에 interface역할을 한다.
+- **tf.data.Dataset**는 각 요소가 하나 이상의 **tf.Tensor**를 포함하는 요소(elements)들을 가집니다.
+- **tf.data.Dataset**은 변환(transformation)을 실시 할 수 있고 변환(transformation)을 적용하면 변환된 **tf.data.Dataset**이 만들어집니다.
+- **tf.data.Iterator**는 데이터 집합에서 element 들을 추출하는 방법들을 제공합니다. element들을 주출할때 **Iterator.get_next()** 을 실행하면 이전에 실행되었던 element의 다음 element를 반환합니다. input pipeline code와 model graph code 간에 interface역할을 하는 역할이라고 보시면 됩니다.
 
 ---
 
@@ -18,8 +18,46 @@
 
 ### 1. Create tf.data.Datasets
 
-먼저 **tf.data.Datasets**을 만드는 방법에 대해 알아 보도록 하겠습니다. 디스크에 저장되어 있는 데이터들을 **tf.data.Datasets** 객체로 만들어 주기 위해서는, `tf.data.Dataset.from_tensors()` 또는 `tf.data.Dataset.from_tensor_slice()` 를 이용하면 됩니다. 그리고 입력 데이터가 TFRecode 형태로 디스크에 저장되어 있으면 `tf.data.TFRecordDataset()`를 사용하면 됩니다.
-먼저 **tf.data.Datasets**을 만드는 방법에 대해 알아 봅시다. 디스크에 저장되어 있는 데이터들을 **tf.data.Datasets** 객체로 만들기 위해서는 `tf.data.Dataset.from_tensors()` 또는 `tf.data.Dataset.from_tensor_slice()` 를 사용합니다. 그리고 입력 데이터가 `TFRecode` 형태로 디스크에 저장되어 있다면 `tf.data.TFRecordDataset`를 사용합니다.
+먼저 **tf.data.Datasets**을 만드는 방법에 대해 알아 보도록 하겠습니다. 디스크에 저장되어 있는 데이터들을 **tf.data.Datasets** 객체로 만들어 주기 위해서는, `tf.data.Dataset.from_tensors()` 또는 `tf.data.Dataset.from_tensor_slice()` 를 이용하면 됩니다. 그리고 입력 데이터가 TFRecode 형태로 디스크에 저장되어 있으면 `tf.data.TFRecordDataset()`를 사용하시면 됩니다.
+
+임의의 데이터를 생성하기 위해 `tf.random_uniform()` 를 이용하여 [4, 10] 형태의 정규분포를 가지는 matrix를 생성합니다.
+
+```python
+sample = tf.random_uniform([4, 10])
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+print(sess.run(sample))
+
+"""
+결과 :
+[[ 0.90787792  0.61397159  0.18408167  0.7551167   0.73780155  0.71332455
+   0.04578114  0.69684279  0.37828314  0.45624506]
+ [ 0.00781178  0.34522772  0.33352196  0.59561861  0.11508143  0.03091383
+   0.64267862  0.5854305   0.28963673  0.11909735]
+ [ 0.42050052  0.19003737  0.81970799  0.50447953  0.08395636  0.72454298
+   0.52941537  0.27786434  0.11810875  0.32241488]
+ [ 0.64369309  0.82986867  0.90090048  0.17842996  0.41610706  0.27193487
+   0.91392732  0.17527235  0.87324584  0.25085866]]
+"""
+
+결과가 잘 출력되는 것을 볼 수가 있습니다. 결과 값은 실행 시 달라질 수 있습니다.
+
+```
+
+임의로 생성한 데이터를 `tf.data.Dataset.from_tensor()`와  `tf.data.Dataset.from_tensor_slices()`에 넣어 봅시다.
+
+```python
+dataset1 = tf.data.Dataset.from_tensor_slices(sample)
+dataset2 = tf.data.Dataset.from_tensor_slices(sample)
+print(dataset1)                 # ==> <TensorDataset shapes: (4, 10), types: tf.float32>
+print(dataset2)                 # ==> <TensorSliceDataset shapes: (10,), types: tf.float32>
+```
+
+결과 값을 확인해 보면 `tf.data.Dataset.from_tensor(sample)`은 데이터의 전체를 저장하는것을 보실수가 있고 `tf.data.Dataset.from_tensor_slices(sample)`은 전체데이터를 slice해서 저장하는것을 보실 수가 있습니다.
+
+`tf.data.Dataset.from_tensor()` 또는 `tf.data.Dataset.from_tensor_slices()` 로 `tf.data.Dataset`객체가 만들어지면 객체안에 구성되는 element들은 동일한 구조로 구성되어 집니다. 각 element들은 `tf.Tensor` 형태이며 Tensor의 element 유형을 나타내는 `tf.DType`과 모양을 나타내는 `tf.TensorShape`로 구성되어져 있습니다.
+
+`Dataset.output_types`과 `Dataset.output_shape`속성을 사용하면 `tf.data.Datset`의 각 element들의 type과 shape를 확인 할 수 있습니다.
 
 ```python
 dataset1 = tf.data.Dataset.from_tensor_slices(tf.random_uniform([4, 10]))
@@ -31,35 +69,53 @@ dataset2 = tf.data.Dataset.from_tensor_slices(
      tf.random_uniform([4, 100], maxval=100, dtype=tf.int32))
 )
 print(dataset2.output_types)    # ==> (tf.float32, tf.int32)
-print(dataset2.output_shapes)   # ==> ((), (100, ))
+print(dataset2.output_shapes)   # ==> (TensorShape([]), TensorShape([Dimension(100)]))
 
 dataset3 = tf.data.Dataset.zip((dataset1, dataset2))
 print(dataset3.output_types)    # ==> (tf.float32, (tf.float32, tf.int32))
-print(dataset3.output_shapes)   # ==> (10, ((), (100, )))
+print(dataset3.output_shapes)   # ==> (TensorShape([Dimension(10)]), (TensorShape([]), TensorShape([Dimension(100)])))
+
 ```
 
+`tf.data.Dataset`의 단일 요소에 collection.namedtuple 또는 dict를 문자열을 탠서에 매핑할 하여 각 구성요소에 이름을 지정해 줄 수 있습니다. 아래 예제를 보시겠습니다.
+
 ```python
+# nametuples 를 이용한 구성요소 이름 지정
+import collections
+Sample = collections.namedtuple('sample_data', 'a b')
+sample_data = Sample(
+    tf.random_uniform([4]), tf.random_uniform([4, 100], maxval=100, dtype=tf.int32))
+dataset = tf.data.Dataset.from_tensor_slices(sample_data)
+print(dataset.output_types)     # ==> sample_data(a=tf.float32, b=tf.int32)
+print(dataset.output_shapes)    # ==> sample_data(a=TensorShape([]), b=TensorShape([Dimension(100)]))
+print(dataset.output_types.a)   # ==> <dtype: 'float32'>
+print(dataset.output_types.b)   # ==> <dtype: 'int32'>
+print(dataset.output_shapes.a)  # ==> ()
+print(dataset.output_shapes.b)  # ==> (100, )
+
+
+# dict 를 이용한 구성요소 이름 지정
 dataset = tf.data.Dataset.from_tensor_slices(
     {
         'a': tf.random_uniform([4]),
         'b': tf.random_uniform([4, 100], maxval=100, dtype=tf.int32)
     }
 )
-print(dataset.output_type)      # ==> {'a' : tf.float32, 'b' : tf.int32}
-print(dataset.output_shapes)    # ==> {'a' : () 'b' : (100, )}
+print(dataset.output_types)     # ==> {'a' : tf.float32, 'b' : tf.int32}
+print(dataset.output_shapes)    # ==> {'a': TensorShape([]), 'b': TensorShape([Dimension(100)])}
+print(dataset.output_types['a'])    # ==> <dtype: 'float32'>
+print(dataset.output_types['b'])    # ==> <dtype: 'int32'>
+print(dataset.output_shapes['a'])   # ==> ()
+print(dataset.output_shapes['b'])   # ==> (100, )
 ```
 
 ### 2. Datasets transformation
 
-<<<<<<< HEAD
 **tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러가지형태로 변형을 할 수 있습니다. 예를들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map())` 하고 전체 데이터셋에 대해서도 변형이 가능합니다. `(ex. tf.data.Dataset.batch())`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있는데 해당하는 메소드들의 리스트는 해당 링크를 확인하시면 됩니다.  [tf.data.Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)
-=======
-**tf.data.Datasets** 객체가 만들어지면 메소드들을 호출하여 **tf.data.Datasets**을 여러 가지 형태로 변형할 수 있습니다. 예를 들어 각 요소(element) 별로도 변형이 가능 `(ex. tf.data.Dataset.map)` 하며 전체 데이터셋에 대해서도 변형할 수 있습니다. `(ex. tf.data.Dataset.batch)`. **tf.data.Dataset** 은 변형(transformation)과 관련된 많은 메소드들이 있으며 해당하는 메소드들의 리스트는 [여기](https://www.tensorflow.org/api_docs/python/tf/data/Dataset)서 알아볼 수 있습니다.  
->>>>>>> b7e25445af1191cb9b631ea677ece248a86035bf
 
 ### 3. Create an tf.data.Iterator
 
-Dataset 에서 input date에 대해 표현을 하면, **Iterator** 은 해 **Dataset** 세트의 요소에 엑세스하기 위해 작성합니다. **tf.data** API는 다음 반복자를 지원합니다.
+Dataset 에서 input date에 대해 표현을 하면, **Iterator** 은 해 **tf.data.Dataset** element에 엑세스하기 위해 사용됩니다. **tf.data** API는 다음 iterator를 지원합니다.
 
 - one-shot
 - initializable
@@ -80,11 +136,8 @@ print(sess.run(next_element))   # ==> 2
 print(sess.run(next_element))   # ==> 3
 ```
 
-<<<<<<< HEAD
 **initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화 `tf.placeholder()` 할 수 있습니다. 예제를 보면 확실히 알 수 있다.
-=======
 **initializable iterator**는 작업을 시작하기 전에 명시적으로 iterator.initializer를 실행하도록 요구합니다. 이 불편함을 감수하는 대신에 iterator를 초기화 할때 공급할 수 있는 하나 이상의 텐서를 사용하여 데이터 세트의 정의를 매개변수화(`tf.placeholder`) 할 수 있습니다. 아래 예제에서 차이점을 확인합니다.
->>>>>>> b7e25445af1191cb9b631ea677ece248a86035bf
 
 ```python
 max_value = tf.placeholder(tf.int64, shape=[])
