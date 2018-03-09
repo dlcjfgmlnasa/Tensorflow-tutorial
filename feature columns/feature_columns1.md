@@ -1,8 +1,8 @@
 # Tensorflow feature_column(1)
 
-이장은 **feature column**에 대해 설명해보도록 하겠습니다. **feature column**는 raw data와 Estimator사이의 중재자 역할을 한다고 생각하시면 됩니다. **feature column**은 Estimator가 raw data를 사용할 수 있는 형식으로 변환시키는 다양한 형식을 가지고 있으며 실험을 쉽게 할 수 있게 할 수 있습니다.
+이장은 **feature column**에 대해 설명해보도록 하겠습니다. **feature column**는 raw data와 Estimator사이의 중재자 역할을 한다고 생각하시면 됩니다. **feature column**은 Estimator가 raw data를 사용할 수 있는 형식으로 변환시키는 다양한 형식을 가지고 있으며 실험을 쉽게 할 수 있게 만들어 줍니다.
 
-우리는 미리 만들어진 Estimator은 `DNNClassifier`를 사용하여 4가지 feature로 부터 다른 종류의 붓꽃의 종을 예측하는 모델을 학습해 보도록 하겠습니다. 이 예제는 `tf.feature_column.numeric_column`만 사용되었습니다.
+우리는 미리 만들어진 Estimator은 `DNNClassifier`를 사용하여 4가지 feature로 부터 다른 종류의 붓꽃의 종을 예측하는 모델을 학습해 본다고 생각해 봅시다. 이 예제는 `tf.feature_column.numeric_column`만 사용될 것 입니다.
 
 붓꽃의 종을 예측하는 문제에서는 꽃잎과 꽃받침의 길이을 feature로 사용하기 때문에 numerical(숫자형) feature를 사용하는 것이 적절합니다. 하지만 세상의 많은 문제에서는 non-numerical feature도 많이 사용됩니다.
 
@@ -16,13 +16,14 @@
 - electronics (전자제품)
 - sports      (스포츠)
 
-ML models은 일반적으로 1이 값이 존재한다는 것을 의미하고 0은 값이 부재한다는 것을 나타내는 간단한 벡터로 categorical(범주형) 값을 나타냅니다 (one-hot vector 라고 이야기 하기도 합니다)`product_class`를 [0,0,1] 로 표현하면 다음과 같은 의미가 됩니다.
+ML models은 일반적으로 1이 값이 존재한다는 것을 의미하고 0은 값이 부재한다는 것을 나타내는 간단한 벡터로 categorical(범주형) 값을 나타냅니다 (one-hot vector 라고 이야기 하기도 합니다) `product_class`를 [0,0,1] 로 표현하면 다음과 같은 의미가 됩니다.
 
 - 0 : kitchenware (표현 X)
 - 0 : electronics (표현 X)
 - 1 : sports      (표현 O)
+> 스포츠용품을 선택하였다.
 
-즉, raw data가 numerical(숫자형) 이거나 categorical(범주형) 데이터 일지는 알 수가 없지만 ml model에서는 모든 feature 들을 숫자로 표현해야됩니다.
+즉, raw data가 numerical(숫자형) 이거나 categorical(범주형) 데이터 일지는 알 수가 없지만 ML model에서는 모든 feature 들을 숫자로 기억하고 있어야 됩니다.
 
 ## Feature Columns
 
@@ -54,13 +55,12 @@ iris 분류기는 입력 feature들에 대해 `tf.feature_column.numeric_column(
 numeric_feature_column = tf.feature_column.numeric_column(key="SepalLength")
 ```
 
-dtype에 인수를 지정해 줄 수 있습니다.
+dtype에 인수를 지정해 데이터 유형을 바꿔줄 수도 있습니다.
 
 ```python
 # Defaults to a tf.float32 scaler
 numeric_feature_column = tf.feature_column.numeric_column(key="SepalLength",
                                                           dtype=tf.float64)
-
 ```
 
 기본적으로 `tf.feature_column.numeric_column`는 scaler(단일값) 만들어줍니다. 하지만 만약 shape인수를 사용하여 다른 모양으로 만들어 줄수 있습니다.
@@ -108,14 +108,14 @@ bucketized_feature_column = tf.feature_column.bucketized_column(
 
 ### Categorical identity column
 
-`categorical identity columns`는 `bucketized columns`의 특수한 경우라고 보시면 됩니다. 기존의 `bucketized columns`은 값의 범위를 나타냅니다. `categorical identity columns`은 각 bucket은 단일 고유한 정수를 나타냅니다. 
+`categorical identity columns`는 `bucketized columns`의 특수한 경우라고 보시면 됩니다. 기존의 `bucketized columns`은 값의 범위를 나타내지만 `categorical identity columns`은 각 bucket은 단일 고유한 정수를 나타냅니다. 
 
 예를들어 [0, 4)의 범위를 가지는 정수범위를 나타내고 싶다고 가정합시다. 그러면 정수 0, 1, 2, 3으로 나타내질껍니다. 이떄 `categorical identity column`을 적용하면 아래와 같이 나타내지게 됩니다.
 
 ![categorical_column_with_identity](https://www.tensorflow.org/images/feature_columns/categorical_column_with_identity.jpg)
 > categorical 별로 id를 mapping한 것입니다. one-hot-encoding으로 불려지기도 합니다.
 
-`bucketized columns`과 마찬가지로 `categorical identity columns`는 각 클래스에 대해 별도의 가중치를 학습할 수 있습니다. 예를 들어 문자열을 사용하여 product_class를 나타내는 대신에 각 클래스의 고유한 정수값으로 나타내 보자. 즉
+`bucketized columns`과 마찬가지로 `categorical identity columns`는 각 클래스에 대해 별도의 가중치를 학습할 수 있습니다. 예를 들어 문자열을 사용하여 product_class를 나타내는 대신에 각 클래스의 고유한 정수값으로 나타내 보면 아래와 같을 것입니다.
 
 - 0 = "kitchenware"
 - 1 = "electronics"
@@ -140,3 +140,52 @@ def input_fn():
 ```
 
 ### Categorical vocabulary column
+
+모델안에 input 데이터를 넣을때 string형으로 넣을수는 없습니다. string 데이터를 numeric(숫자형) 또는 categorical(범주형)으로 바꿔줘야됩니다. `categorical vocabularay column`는 string 데이터를 ont-hot vector로 표현하는 좋은 방법을 제공합니다. 
+
+![categorical_column_with_vocabulary](https://www.tensorflow.org/images/feature_columns/categorical_column_with_vocabulary.jpg)
+> string 값을 vocabularay column 으로 mapping 시켰습니다.
+
+보시다시피 `categorical vocabularay columns`은 `categorical identity columns`의 열거형 버전중 하나하는 것을 아실 수가 있습니다.
+Tensorflow 에서는 두가지 종류의 `categorical vocabularayn columns` 함수를 제공합니다.
+
+- `tf.feature_column.categorical_column_with_vocabulary_list`
+- `tf.feature_column.categorical_column_with_vocabulary_file`
+
+ `tf.feature_column.categorical_column_with_vocabulary_list`은 어휘목록을 기반으로 string 데이터를 integer 데이터로 매핑시킵니다.
+
+ 예를들어
+
+```python
+# Given input "feature_name_from_input_fn" which is a string,
+# create a categorical feature by mapping the input to one of
+# the elements in the vocabulary list.
+vocabulary_feature_column =
+    tf.feature_column.categorical_column_with_vocabulary_list(
+        key="a feature returned by input_fn()",
+        vocabulary_list=["kitchenware", "electronics", "sports"])
+```
+
+ `tf.feature_column.categorical_column_with_vocabulary_file`은 어휘목록을 기반으로 string 데이터를 integer 데이터로 매핑시킵니다.
+
+ 앞의 함수는 간단하지만 중요한 단점이 있습니다. 어휘 목록이 길면 입력이 너무 많아져 사용의 불편함이 있을 수 있습니다. `tf.feature_column.categorical_column_with_vocabulary_file`를 
+
+```python
+# Given input "feature_name_from_input_fn" which is a string,
+# create a categorical feature to our model by mapping the input to one of
+# the elements in the vocabulary file
+vocabulary_feature_column =
+    tf.feature_column.categorical_column_with_vocabulary_file(
+        key="a feature returned by input_fn()",
+        vocabulary_file="product_class.txt",
+        vocabulary_size=3)
+```
+
+ `product_class.txt`를 작성할 시 각 어휘에 대해 한 줄씩 작성하시면 됩니다.
+ 
+~~~
+# product_class.txt 파일
+kitchenware
+electronics
+sport
+~~~
