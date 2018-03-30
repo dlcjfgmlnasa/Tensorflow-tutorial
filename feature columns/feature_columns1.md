@@ -6,6 +6,9 @@
 
 붓꽃의 종을 예측하는 문제에서는 꽃잎과 꽃받침의 길이을 feature로 사용하기 때문에 numerical(숫자형) feature를 사용하는 것이 적절합니다. 하지만 세상의 많은 문제에서는 non-numerical feature도 많이 사용됩니다.
 
+![feature_cloud](https://www.tensorflow.org/images/feature_columns/feature_cloud.jpg)
+> real-world에서 feature들은 numeric(숫자형) 도 있지만 아닌 경우도 있다.
+
 ## Input to Deep Neural Network
 
 신경망은 어떻게 계산이 될까요?? 다들 아시겠지만 답은 숫자를 통해서 계산이 됩니다 (사실 컴퓨터는 다 숫자로 표현되어져 있습니다). 신경망은 뉴런은 가중치와 입력데이터에 대해 곱셉과 덧셈을 실시하여 계산됩니다. 그러나 앞에서 말했다 시피 입력 데이터의 형식이 numberical(숫자형)이 아닌 categorical(범주형)의 데이터가 있을수도 있습니다.
@@ -182,10 +185,14 @@ vocabulary_feature_column =
 ```
 
  `product_class.txt`를 작성할 시 각 어휘에 대해 한 줄씩 작성하시면 됩니다.
- 
-~~~
+
+```text
 # product_class.txt 파일
 kitchenware
 electronics
 sport
-~~~
+```
+
+### Hashed Column
+
+지금까지 우리는 작은개수의 categories 만으로만 작업했습니다. 예를들어 `product_class` 예제에서는 3개의 categories 만 사용합니다. 그러나 종종 categories 의 수가 너무 많아서 각 word나 integer에 대해 개별 categories를 가질수가 없을수가 없을수도 있습니다. 왜냐하면 너무 많은 메모리를 사용하게 되기 때문입니다. 이경우 대신에 질문을 돌려서 질문을 할 수 있습니다. "입력할 categories의 수는 몇 가지 입니까?"
