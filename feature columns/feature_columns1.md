@@ -144,7 +144,7 @@ def input_fn():
 
 ### Categorical vocabulary column
 
-모델안에 input 데이터를 넣을때 string형으로 넣을수는 없습니다. string 데이터를 numeric(숫자형) 또는 categorical(범주형)으로 바꿔줘야됩니다. `categorical vocabularay column`는 string 데이터를 ont-hot vector로 표현하는 좋은 방법을 제공합니다. 
+모델안에 input 데이터를 넣을때 string형으로 넣을수는 없습니다. string 데이터를 numeric(숫자형) 또는 categorical(범주형)으로 바꿔줘야됩니다. `categorical vocabularay column`는 string 데이터를 ont-hot vector로 표현하는 좋은 방법을 제공합니다.
 
 ![categorical_column_with_vocabulary](https://www.tensorflow.org/images/feature_columns/categorical_column_with_vocabulary.jpg)
 > string 값을 vocabularay column 으로 mapping 시켰습니다.
@@ -195,4 +195,4 @@ sport
 
 ### Hashed Column
 
-지금까지 우리는 작은개수의 categories 만으로만 작업했습니다. 예를들어 `product_class` 예제에서는 3개의 categories 만 사용합니다. 그러나 종종 categories 의 수가 너무 많아서 각 word나 integer에 대해 개별 categories를 가질수가 없을수가 없을수도 있습니다. 왜냐하면 너무 많은 메모리를 사용하게 되기 때문입니다. 이경우 대신에 질문을 돌려서 질문을 할 수 있습니다. "입력할 categories의 수는 몇 가지 입니까?"
+지금까지 우리는 작은개수의 categories 만으로만 작업했습니다. 예를들어 `product_class` 예제에서는 3개의 categories 만 사용합니다. 그러나 종종 categories 의 수가 너무 많아서 각 word나 integer에 대해 개별 categories를 가질수가 없을수가 없을수도 있습니다. 왜냐하면 너무 많은 메모리를 사용하게 되기 때문입니다. 이경우 대신에 질문을 돌려서 질문을 할 수 있습니다. "입력할 categories의 수는 몇 가지 입니까?" 
